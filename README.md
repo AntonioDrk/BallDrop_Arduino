@@ -19,3 +19,7 @@ An Arduino Uno game on a 8 x 8 LED Matrix
 - 10k, 1k, 220 Ohm resistors
 
 - Joystick Arduino Module
+
+### Video
+
+Click on this [link](https://www.youtube.com/embed/WU3zjfFL5Lk) to see the project completed.
