@@ -1,6 +1,7 @@
 #include <LedControl.h>
 #include <LiquidCrystal.h>
 #include <EEPROM.h>
+
 #define joyPinX A0
 #define joyPinY A1
 #define joyPinBtn 8
@@ -8,6 +9,7 @@
 #define ClkPin 11
 #define LoadPin 10
 #define V0_PIN 9
+
 LedControl lc = LedControl(DinPin, ClkPin, LoadPin, 1); //DIN, CLK, LOAD, No. DRIVER
 LiquidCrystal lcd(1, 2, 4, 5, 6, 7); // Creates an LC object. Parameters: (rs, enable, d4, d5, d6, d7);
 struct Player {
@@ -43,6 +45,7 @@ bool toDraw[8][8] = {
   0, 0, 0, 0, 0, 0, 0, 0,
   0, 0, 0, 0, 0, 0, 0, 0
 };
+
 // The intervalAscendPlatforms I want the platforms to be moving at 1 row up
 unsigned long intervalAscendPlatforms = 1000;
 unsigned long intervalScore = 300;
@@ -105,16 +108,22 @@ void setup()
   analogWrite(V0_PIN, 100); // PWN in loc de POTENTIOMETRU
   // -----------------------
 
+  // Initial player position + score
   player.x = 0;
   player.y = 2;
   player.score = 0;
+  
   nrPlatforms = 4;
   // Initialize the first 4 platforms that will appear at the start of the game
   for (int i = 0; i < nrPlatforms; i++) {
     // Spawn  the platforms at an odd number of rows because the player will spawn at 0,0
     platforms[i] = initRandomPlatform(2 * i + 1);
   }
+  
+  // Set the initial state of the game to wait on input from the user
   gameState = WAIT_INPUT;
+  
+  // Draw the initial positions of all the objects so the player can see the starting scene
   toDraw[player.y][player.x] = 1;
   calculatePlatforms(platforms, nrPlatforms, toDraw);
   drawImage(toDraw);
@@ -145,6 +154,8 @@ void keepInBound(Player &player) {
   player.y = player.y < 0 ? 0 : player.y;
 }
 
+// Reads the input from the joystick and moves the player accordingly
+// Also takes care of the collision and the pull from gravity
 void processJoyInput(Player &player) {
   int joyX = analogRead(joyPinX);
   int joyY = analogRead(joyPinY);
@@ -181,14 +192,17 @@ void processJoyInput(Player &player) {
   toDraw[player.y][player.x] = 1;
 }
 
+// moves all the platforms up by one and also checks if the player was crushed by the ascending platforms
 void movePlatformsUp(Platform platforms[], int &nrPlatforms) {
   for (int i = 0; i < nrPlatforms; i++) {
+    
     if (player.y == platforms[i].y - 1) {
       player.y--;
       // If the player was "crushed" by the platform, kill him
       if (player.y < 0)
         gameState = DEATH;
     }
+    
     platforms[i].y -= 1;
     if (platforms[i].y < 0) {
       platforms[i] = initRandomPlatform(7);
@@ -202,6 +216,7 @@ void movePlatformsUp(Platform platforms[], int &nrPlatforms) {
   }
 }
 
+// Draws a big X to symbolize the death of the player
 void deathLogo(bool DrawTable[8][8]) {
   for (int i = 0; i < 8; i++) {
     for (int j = 0; j < 8; j++) {
@@ -213,19 +228,27 @@ void deathLogo(bool DrawTable[8][8]) {
 
 void loop()
 {
+  // Used to calculate the intervals
   unsigned long currentMillis = millis();
+  
+  // To check if the player selected something in the menu
   int joyX = analogRead(joyPinX);
   int joyY = analogRead(joyPinY);
+  
   switch (gameState) {
     case WAIT_INPUT:
+      
       lcd.setCursor(0, 0);
       lcd.print("Start Game < >");
       lcd.setCursor(0, 1);
       lcd.print("Highscore: " + String(intHighScore));
+      
       // If the player moved the joystick any direction start the game
       if ( joyX > 768 || joyX < 256) {
         gameState = PLAYING;
       }
+      
+      // Bool used when you play again after you died
       death = 0;
       break;
 
@@ -239,9 +262,11 @@ void loop()
       }
 
       if (currentMillis - previousMillisScore >= intervalScore) {
-
         previousMillisScore = currentMillis;
+        // The function for calculating the score, this can be changed however one wishes
         player.score += 1 + 3 / intervalAscendPlatforms;
+        
+        // Decrease how big is the interval for platforms to go up
         if (intervalAscendPlatforms > 100)
           intervalAscendPlatforms = intervalAscendPlatforms - speedAscendPlatforms;
       }
@@ -251,28 +276,34 @@ void loop()
       // Takes user input
       processJoyInput(player);
       drawImage(toDraw);
+      
       lcd.clear();
       lcd.setCursor(0, 0);
       lcd.print("Score: " + String(player.score));
       lcd.setCursor(0, 1);
       lcd.print("Speed: " + String(11 - intervalAscendPlatforms / 100));
-      //lcd.print("Highscore: " + String(intHighScore));
+      
       break;
     case DEATH:
       if (!death) {
+        // Display the big X
         clearImage(toDraw);
         deathLogo(toDraw);
         drawImage(toDraw);
+        // Show the score the player made
         lcd.clear();
         lcd.setCursor(0, 0);
         lcd.print("Close Game ^ v");
         lcd.setCursor(0, 1);
         lcd.print("Score: " + String(player.score));
-        if (player.score > (int)highScore) {
+        // Set the highscore if it's the case
+        if (player.score > intHighScore) {
           EEPROM.put(eeAdress, (float)player.score);
         }
+        // Reset the local score and the interval
         player.score = 0;
         intervalAscendPlatforms = 1000;
+        
         death = 1;
       }
 
