@@ -1,8 +1,11 @@
 # Ball Drop
 
 An Arduino Uno game on a 8 x 8 LED Matrix
+![Image of the project](https://i.imgur.com/Acfqlw9.jpg)
 
 ## Components required
+
+For this project you will need:
 
 - Arduino UNO
 
@@ -20,6 +23,23 @@ An Arduino Uno game on a 8 x 8 LED Matrix
 
 - Joystick Arduino Module
 
-### Video
+- Jumper wires male-male (lots of them)
 
-Click on this [link](https://www.youtube.com/embed/WU3zjfFL5Lk) to see the project completed.
+- 5 x Jumper wires male-female (for the joystick)
+
+## About the game
+
+In this game you are a ball that has to try to get as far as possible without being squashed by the platforms on the top of the screen.
+
+### Scoring system
+
+There's a highscore that gets saved on the arduino and you can always try to beat the previous highscore.
+The score is calculated by "how long you survive", every 300 ms you get some points (calculated by the current speed of the platforms).
+
+### Difficulty
+
+The difficulty consists of constantly raising the speed of the platforms, they start from Speed 1 all the way to Speed 10
+
+## Video
+
+Click on this [link](https://www.youtube.com/embed/WU3zjfFL5Lk) to see the whole project in action.
