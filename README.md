@@ -1,6 +1,7 @@
 # Ball Drop
 
 An Arduino Uno game on a 8 x 8 LED Matrix
+
 ![Image of the project](https://i.imgur.com/Acfqlw9.jpg)
 
 ## Components required
