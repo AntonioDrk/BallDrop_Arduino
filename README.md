@@ -9,7 +9,7 @@ For this project you will need:
 
 - Arduino UNO
 
-- 2 x Breadboards
+- 2 x Medium Breadboard
 
 - Red 8x8 LED matrix
 
