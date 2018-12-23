@@ -28,9 +28,27 @@ For this project you will need:
 
 - 5 x Jumper wires male-female (for the joystick)
 
+
+## Prerequisites
+
+- Arduino IDE installed, can be found [here](https://www.arduino.cc/en/main/software)
+
+In adition to the standard libraries integrated in Arduino IDE, you'll need to download as well the LedControl.h library, which can be found on [this repo](https://github.com/wayoda/LedControl).
+
+Then you can include it in other projects as well.
+```
+#include <LedControl.h>
+```
+
+
 ## About the game
 
 In this game you are a ball that has to try to get as far as possible without being squashed by the platforms on the top of the screen.
+
+### Controls
+
+You have a joystick to move side-ways ( or up and down in the menu).
+It adds an arcade-ish feel to it, but can be easily swapped with any input module. 
 
 ### Scoring system
 
