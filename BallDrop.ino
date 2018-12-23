@@ -8,7 +8,7 @@
 #define DinPin 12
 #define ClkPin 11
 #define LoadPin 10
-#define V0_PIN 9
+#define LCDContrastPin 9
 
 LedControl lc = LedControl(DinPin, ClkPin, LoadPin, 1); //DIN, CLK, LOAD, No. DRIVER
 LiquidCrystal lcd(1, 2, 4, 5, 6, 7); // Creates an LC object. Parameters: (rs, enable, d4, d5, d6, d7);
@@ -104,8 +104,9 @@ void setup()
   // LCD
   lcd.begin(16, 2);
   lcd.print("Highscore: " + String(intHighScore));
-  pinMode(V0_PIN, OUTPUT); // PWN in loc de POTENTIOMETRU
-  analogWrite(V0_PIN, 100); // PWN in loc de POTENTIOMETRU
+  // Contrast of LCD
+  pinMode(LCDContrastPin, OUTPUT); 
+  analogWrite(LCDContrastPin, 100); 
   // -----------------------
 
   // Initial player position + score
